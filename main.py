@@ -1,8 +1,6 @@
 #la premiere ligne est pour linux donc bat les couilles
 # -*- coding: utf-8 -*-
-"""
-Encodage windows qui poserait problème: cp...
-"""
+
 import os, os.path
 import nltk
 import email
@@ -26,7 +24,11 @@ class main:
     
     muahaha common word fr est en ansi, common word en en utf 8! magnifique C'est vraiment de la grosse merde ses fichiers
     pourquoi les chiffre d'ailleurs ds le common word fr??
-    plus les subjects qui ont 3 encodages différents, et en plus en dur dans le fichier original!
+    plus les subjects qui ont 3 encodages différents, et en plus en dur dans le fichier original!=>traité avec decode_header() (qq érreurs subsistent mais bon..)
+    penser à proposer de download les fichier nltk pour lancer le truc sur une autre machine
+    
+    
+    question: est il vraiment necessaire de garder les accents? je crois que je me fait chier avec en fait...
 """
 print "start"         
       
@@ -34,8 +36,16 @@ filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_0
 pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"
 pathENG = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_en.txt"
 listdefich = os.listdir(filepath)
+global feuille
+feuille = open("feuille.txt", "w+")
 
-
+"""
+############################
+FONCTION qui crée une liste à partir des fichiers de stop words anglais et et francais, et plus quelques ajouts personnels
+APPELEE dans: le main
+PB: c'est-à-dire: stopword, mais la reg ex enlève le c'..
+############################
+"""
 def stopwords(pathFR,pathENG):
     stopEN = open(pathENG, "r")
     stopFR = open(pathFR, "r")
@@ -50,22 +60,22 @@ def stopwords(pathFR,pathENG):
     return stoplist
 
 stoplist = stopwords(pathFR,pathENG)
-
+"""
+############################
+FONCTION 
+APPELEE dans: parsemail
+############################
+"""
 def tokenostop(corpsmail, stoplist): #mettre les mots 
     #print corpsmail
     
     mailtokenibad = nltk.word_tokenize(corpsmail) #marche, mais encodage un peu chelou... puis marche assez mal en fait... (point esseulé, ou à la fin d'un mot. , (L')Utilisation.. /http séparé => PROBLEME DES "d'"
-    """
-    expression régulière:
-    =          #enlève les points
-                #supprimer les longues chaines de """"""" ou autre
-                #supprime les d', l' etc...
-    """
+   
     mailtokeni =  []
     for i in mailtokenibad:
-        fix = re.sub("((.)?'|)((?P<mot>[\xc3\xa9\xc2\xa0\xc5\x93\xa8\xae\xa2\xaf\xa7\xb4\xaa\xb10-9A-Za-z_ @:-]*).?)", "\g<mot>", i) #mots a problème: où(deuxime mail), THÉMATIQUE(et ouais putain les majuscules...), ya aussi les retours de chariot qui bugent sur ce mail.. goùt(pareil que nrmlt)
-        #fix = i #pour desactiver la regex
-        print fix
+        fix = re.sub("((.)?'|)((?P<mot>[\xc3\xa9\xc2\xa0\xc5\x93\xa8\xae\xa2\xaf\xa7\xb4\xaa\xb1\xb9\xbb0-9A-Za-z_ @:-]*).?)", "\g<mot>", i) #mots a problème:  THÉMATIQUE(et ouais putain les majuscules...(\x89)), et le petit nouveau: le en dash...:\xe2\x80\x93(?)
+        #fix = i #décommenter pour desactiver la regex
+        #print fix
         if fix == '': 
             #print i #regarder les caractères supprimé par la regex.. et ca marche super!!!
             pass
@@ -78,6 +88,14 @@ def tokenostop(corpsmail, stoplist): #mettre les mots
             #mettre en lowercase, faire correspondre l'encodage=>fait
         
     return mailtokeni
+
+
+"""
+############################
+FONCTION pour extraire le contenu des mails, et le separé en une liste de 3 éléments
+APPELEE dans: le main
+############################
+"""
 
 def parsemail(listdefich,filepath,stoplist):
     
@@ -97,6 +115,8 @@ def parsemail(listdefich,filepath,stoplist):
             mailform.append(contenumail['date'].lower())
             mailform.append(contenumail['from'])
             mailtokeni = tokenostop(contenumail.get_payload().lower(),stoplist) #choppe le contenu du mail en lowercase, le problème c'est que Equipe se transforme en equipe au lieu de équipe...
+            #faire un fichier regroupant tous les mots trouvés
+            imprimante(mailtokeni)
             mailform.append(mailtokeni) #ici, tokeniser, lemmatiser...
     
             print("//////////////////////////////////////////////////////////////////")
@@ -111,7 +131,13 @@ def parsemail(listdefich,filepath,stoplist):
             totalmail.append(mailform) 
     print totalmail  
 
-
+def imprimante(mailtokeni): #en faire un fichier inversé avec le nombre total d'occurences du mot, puis les textes dans lequel apparait le mot avec le nombre d'occurence dans le texte
+    #pour l'instant je vais faire un retraitement du fichier
+    for mot in mailtokeni:
+        feuille.write(mot)
+        feuille.write('\n')
+    
+    
 
          
 parsemail(listdefich,filepath,stoplist)

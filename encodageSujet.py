@@ -30,7 +30,7 @@ def parsemail(listdefich,filepath):
             mail = fichmail.read()
             contenumail = email.message_from_string(mail)
    
-            sujet = contenumail['subject']
+            sujet = contenumail['subject'].lower()
             print sujet
             convsuje = decode_header(sujet)
             print str(convsuje)

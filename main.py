@@ -10,7 +10,7 @@ import re
 
 """
 class main:
-    pass
+    pass  
     
     LISTE DE CHIERS BUGGANT:
     -1 fariza ok
@@ -29,6 +29,10 @@ class main:
     
     
     question: est il vraiment necessaire de garder les accents? je crois que je me fait chier avec en fait...
+"""
+"""
+faire un fichier inversé ac les mots originaux et l'index de liste de leur racine.
+faire une correction dans le fichier inversé pour regrouper en un seul mot ceux ayants des fautes, ac la forme retenue etant celle ayant le + grd effectif
 """
 print "start"         
       
@@ -73,7 +77,7 @@ def tokenostop(corpsmail, stoplist): #mettre les mots
    
     mailtokeni =  []
     for i in mailtokenibad:
-        fix = re.sub("((.)?'|)((?P<mot>[\xc3\xa9\xc2\xa0\xc5\x93\xa8\xae\xa2\xaf\xa7\xb4\xaa\xb1\xb9\xbb0-9A-Za-z_ @:-]*).?)", "\g<mot>", i) #mots a problème:  THÉMATIQUE(et ouais putain les majuscules...(\x89)), et le petit nouveau: le en dash...:\xe2\x80\x93(?)
+        fix = re.sub("((.)?'|)((?P<mot>[\xc3\xa9\xc2\xa0\xc5\x93\xa8\xae\xa2\xaf\xa7\xb4\xaa\xb1\xb9\xbb0-9A-Za-z_ @:-]*).?)", "\g<mot>", i) #mots a problème:  THÉMATIQUE(et ouais putain les majuscules...(\x89)), et le petit nouveau: le en dash...:\xe2\x80\x93(?),aujourd'hui
         #fix = i #décommenter pour desactiver la regex
         #print fix
         if fix == '': 

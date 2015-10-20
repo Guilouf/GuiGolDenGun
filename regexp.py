@@ -23,6 +23,8 @@ for i in afiltrer:
     print "origin:    " + i
     fix = re.sub(ur"((.)?'|)((?P<mot>[\xc3\xa9\xc2\xa0\xc5\x93\xa8\xae\xa7\xb4\xaa\xb1\xb9\x89\xbb0-9A-Za-z_ @:-]*).?)", "\g<mot>", i) #putain je sais pas comment j'ai fait mais genial quoi, faire un pipe pour les mails
     #je pense qu'on peut retirer les : ; etc
+    #faire un truc pour passer les É en é
+    
     
     
     print "modif:    " + fix

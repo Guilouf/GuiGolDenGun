@@ -19,7 +19,7 @@ def  degross(filepath,listdefich):
         contenumail = []
         
         if ".recoded" in j: #pour ne pas chopper le non recod
-            fichmail = open(filepath+j,"r") #les recoded font bugger en fait(encoage a mettre)  marche tjr pas
+            fichmail = open(filepath+j,"r", encoding='utf-8') #les recoded font bugger en fait(encoage a mettre)  marche tjr pas
             #print (fichmail[5])
             
             for i in fichmail: # il recherche dans la totalit� de la phrase ou il ny est pas=>regarder le premier element de la liste de la phrase
@@ -48,7 +48,7 @@ totalmail = degross(filepath,listdefich)
 
 
 def ecriveur(totalmail):
-    dataset = open("BIGdata.csv","w")   #bon ya des sujets qui sont placés en bout de liste, comme ca... et ca change entre openoff et notepad..
+    dataset = open("BIGdata.csv","w", encoding='utf-8')   #bon ya des sujets qui sont placés en bout de liste, comme ca... et ca change entre openoff et notepad..
     
     for i in totalmail: #parcourt les mails
         

@@ -15,6 +15,6 @@ mais qq bugs: cnrs transformé en cnr..
 
 
 for mot in feuilletrie:
-    mot = mot.strip().decode('utf-8')
+    mot = mot.strip()   #.decode('utf-8')
     stema = stemAl.stem(mot)
-    print stema
+    print (stema)

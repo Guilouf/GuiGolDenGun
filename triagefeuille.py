@@ -13,9 +13,9 @@ feuille = set(feuille) #prend que les éléments uniques
 feuille = sorted(feuille) #le .sort() retourn none, il le fait direct..
 
 
-print str(feuille)
+print (str(feuille))
 
 for ligne in feuille:
     #ligne = ligne.strip()
     feuilletrie.write(ligne)
-    print ligne
+    print (ligne)   #je ne vois aucun accent...

@@ -34,7 +34,7 @@ class main:
 faire un fichier inversé ac les mots originaux et l'index de liste de leur racine.
 faire une correction dans le fichier inversé pour regrouper en un seul mot ceux ayants des fautes, ac la forme retenue etant celle ayant le + grd effectif
 """
-print "start"         
+print ("start" )        
       
 filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/bioinfo_2014-01/"
 pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"
@@ -110,8 +110,8 @@ def parsemail(listdefich,filepath,stoplist):
     for j in listdefich:
         mailform = []
         if ".recoded" in j:   
-            fichmail = codecs.open(filepath+j,"r") #bon je pense que c deja decodé peut etre
-            mail = fichmail.read()
+            fichmail = open(filepath+j,"r", encoding='utf-8') #bon je pense que c deja decodé peut etre
+            mail = fichmail.read() 
             contenumail = email.message_from_string(mail)
             
             
@@ -131,9 +131,9 @@ def parsemail(listdefich,filepath,stoplist):
             """
             
             
-            print mailform
+            print (mailform)
             totalmail.append(mailform) 
-    print totalmail  
+    print (totalmail)  
 
 def imprimante(mailtokeni): #en faire un fichier inversé avec le nombre total d'occurences du mot, puis les textes dans lequel apparait le mot avec le nombre d'occurence dans le texte
     #pour l'instant je vais faire un retraitement du fichier

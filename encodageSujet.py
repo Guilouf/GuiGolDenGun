@@ -19,7 +19,7 @@ listdefich = os.listdir(filepath)
 
 
 
-def parsemail(listdefich,filepath):
+def lecture(listdefich,filepath):
     
   
     
@@ -59,6 +59,9 @@ def parsemail(listdefich,filepath):
              print ( ' '.join([ unicode(t[0], t[1] or default_charset) for t in convsuje ]) )
             print contenumail['subject'].lower()
             print contenumail['subject'].lower().encode()
+            
+            UTILISER ISINSTANCE
+            
             """
             
             
@@ -68,4 +71,4 @@ def parsemail(listdefich,filepath):
 
 
 
-parsemail(listdefich,filepath)
+lecture(listdefich,filepath)

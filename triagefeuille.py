@@ -2,8 +2,8 @@
 
 
 #la fonction set peut rendre les occurences uniques
-feuille = open("feuille.txt", "r")
-feuilletrie = open('feuilletrie.txt', 'w')
+feuille = open("feuille.txt", "r", encoding='utf-8')
+feuilletrie = open('feuilletrie.txt', 'w' , encoding='utf-8')
 
 feuille = feuille.readlines()
 #feuille = [l for l in feuille if l.strip()]

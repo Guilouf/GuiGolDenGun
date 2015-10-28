@@ -2,24 +2,30 @@
 ## Cette fonction prend en parametres le chemin d'un repertoire
 ## Cette fonction donne en sortie des fichiers txt 
 
+
 def Supprimer_Interligne(path):
     import glob
     import os
     import re
+    #print("putain")
     mesDossiers = glob.glob(path+"\\*")
     for dossier in mesDossiers:
+        #print("putain?")
         mesFichiers = glob.glob(dossier+"\\*")
         for fichier in mesFichiers:
+            print("putain!")
             chaine=fichier.split(os.sep)
             p=chaine[-2]
             pattern0 =p[-2:]
             pattern1 =os.path.basename(fichier)
-            monFichier = file(fichier)
-            output_file=open(path+"\\"+pattern0+'_'+pattern1+"_Traite.txt",'w')
+            monFichier = open(fichier, "r", encoding='utf-8')
+            output_file=open(path+"\\"+pattern1,'w', encoding="utf-8")
             for line in monFichier.readlines():
                 if line.rstrip():
                     output_file.write(line)
-    output_file.close()    
+            output_file.close()    
+            
     
-Supprimer_Interligne("C:\\Users\\Sofiane\\Desktop\\M2_BIG\\ADT\\Projet_2015\\Donnees\\archives_SFBI\\archives_SFBI\\2015_06_10-bioinfo_archives_annee_2014")
+Supprimer_Interligne("C:\\Users\\Guigui\\Desktop\\M2\\ADT\\Moteur_Recherche\\archives_SFBI\\2015_06_10-bioinfo_archives_annee_2014")
 
+print("putain...")

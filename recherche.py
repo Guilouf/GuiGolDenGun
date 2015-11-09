@@ -2,12 +2,17 @@
 
 from tfidf import TfIdf
 import nltk
+import pickle
 
 class Recherche:
     
     def __init__(self):
-        ti = TfIdf()
-        self.dicoInv, self.norme = ti.calcul() #retourne un tuple..
+        #ti = TfIdf()
+        #dicoInvNONUTILISE, self.norme = ti.calcul() #retourne un tuple..
+        with open("dicotfidf", 'rb') as dicoPKL:
+            self.dicoInv= pickle.load(dicoPKL)
+        with open("norme", 'rb') as normePKL:
+            self.norme= pickle.load(normePKL)
     
     def traitement_requete(self,requete):
         #en gros faut faire la mm chose que pour les docs.. et considérer la requete comme un doc?
@@ -86,12 +91,10 @@ class Recherche:
         print(listdedocs)
         print(listcosnorm)
         print(sorted(listcosnorm, reverse=True))
-        """
-        je soupsonne un gros problème avec l'index des documents.. le correspond bien, et deja au 2 ca foire...
-        """
+        
 
 re = Recherche()
-dicoreq = re.traitement_requete("aix-marseille mcf ") #tarragona spain genomes biology biologie
+dicoreq = re.traitement_requete("aix-marseille mcf adn biologie stage email") #tarragona spain genomes biology biologie
 #c'est normal qu'il y ai des problèmes, ya des documents qui manquent (le 93) du ca decale.
 rech = re.rech(dicoreq)
 print(dicoreq)

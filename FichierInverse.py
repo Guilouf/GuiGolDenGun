@@ -70,19 +70,19 @@ class FichierIverse: #ya une faute au fait..
   
   
   
+if __name__ == "__main__":    
+    ft = FichierIverse()
+    dicoInv, nbmotsdocs, nbmotCorpus = ft.fichInv()
+               
+    print("#########              DICO                 #############")    
+    ""    
+    print(str(dicoInv))
     
-ft = FichierIverse()
-dicoInv, nbmotsdocs, nbmotCorpus = ft.fichInv()
-           
-print("#########              DICO                 #############")    
-""    
-print(str(dicoInv))
-
-for i in dicoInv:
-    print(i +": "+ str(dicoInv[i]))
-    
-print(nbmotsdocs)
-print(nbmotCorpus)
+    for i in dicoInv:
+        print(i +": "+ str(dicoInv[i]))
+        
+    print(nbmotsdocs)
+    print(nbmotCorpus)
 """
 Ce que tout ca retourne:
 Un dictionnaire avec comme clé des mots,

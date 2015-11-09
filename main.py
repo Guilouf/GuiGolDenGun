@@ -48,7 +48,7 @@ class Parsemail:
         print("start __init__ parsemail" )        
         
             
-        self.filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/bioinfo_2014-01/"
+        self.filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/Traitement_Interlignes/"
         
         self.pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"
         
@@ -163,12 +163,12 @@ class Parsemail:
             self.feuille.write('\n')
     
     
+if __name__ == "__main__": #permet de ne pas executer à l'import du fichier mais seulement qd on ne run que ce fichier
+    ft = Parsemail()
+          
+    ft.parsemail() 
 
-ft = Parsemail()
-      
-ft.parsemail() 
-
-print("arrete d'imprimer ca c'est pas dans la classe bordel t con ou quoi??")
+    print("arrete d'imprimer ca c'est pas dans la classe bordel t con ou quoi??")
 
 
 

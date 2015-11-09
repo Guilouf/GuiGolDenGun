@@ -11,7 +11,7 @@
  """
 from FichierInverse import FichierIverse
 import math
- 
+import pickle 
 """
 problème.. python execute des fonctions qui sont en dehors de la classe, donc en plus les codes sont executé deux *...
 
@@ -66,6 +66,10 @@ class TfIdf:
                 print((self.dicoInv[clemot])[indextuple])
                 
         norme = float(math.sqrt(sommedesTfIdfaucarre)) #pas sur que l'on doive faire le calcul des maintenant..
+        with open("dicotfidf", 'wb') as dicotfidfPKL:
+            pickle.dump(self.dicoInv,dicotfidfPKL)
+        with open("norme", 'wb') as normePKL:
+            pickle.dump(norme,normePKL)
         return self.dicoInv, norme
     
     
@@ -73,7 +77,7 @@ class TfIdf:
 """
 le faux main:
 """ 
+if __name__ == "__main__":    
+    ti = TfIdf()
     
-ti = TfIdf()
-
-ti.calcul()
+    ti.calcul()

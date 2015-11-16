@@ -82,19 +82,21 @@ class Recherche:
         
         listcosnorm = []
         
-        #normalisation des cos
+        #normalisation des cos            #a faire ds la boucle plus haut
         for cos in listcos:
             cosnorm = float( cos / self.norme )
             listcosnorm.append(cosnorm)
         
         print("resultatfinal")
+        #print(listdedocs)
+        #print(listcosnorm)
+        #print(sorted(listcosnorm, reverse=True))
+        #faut trier les deux listes dans l'ordre de listcosnorm
+        listcosnorm,listdedocs = zip(*sorted(zip(listcosnorm,listdedocs), reverse = True))
         print(listdedocs)
-        print(listcosnorm)
-        print(sorted(listcosnorm, reverse=True))
-        
 
 re = Recherche()
-dicoreq = re.traitement_requete("aix-marseille mcf adn biologie stage email") #tarragona spain genomes biology biologie
+dicoreq = re.traitement_requete("tarragona ") #tarragona spain genomes biology biologie
 #c'est normal qu'il y ai des problèmes, ya des documents qui manquent (le 93) du ca decale.
 rech = re.rech(dicoreq)
 print(dicoreq)

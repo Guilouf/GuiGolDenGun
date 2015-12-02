@@ -1,4 +1,5 @@
-
+import os
+import psutil
 
 class TestPOO:
     
@@ -21,8 +22,11 @@ class TestPOO:
         self.imprimort(effetBombe)
         return effetBombe
         
-    def list
+    
         
         
 t = TestPOO()      
 t.bombe() 
+process = psutil.Process()
+print(process.memory_info().rss / 1048576 )
+print(process.cpu_times())

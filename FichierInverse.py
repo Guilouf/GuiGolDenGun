@@ -1,10 +1,8 @@
  #-*- coding: utf8 -*-
 #F9 pour lancer le prog!
 
-#penser ensuite à la serialisation, à voir
-import main
 import operator #pour laddition des tuples
-from main import Parsemail
+from main import Parsemail #import du premier script permettant la lecture et tokénisation des contenus du mail
 
 """
 Convention objet python:
@@ -15,71 +13,78 @@ attribut: pareil_que_methodes
 """
 
 """
-ca peut valoir le coup de supprimer la liste de nb de mot total, dans la valeur du dico..
+ca peut valoir le coup de supprimer la liste de nb de mot total, dans la valeur du dico, vu que ca sert à rien..
 """
 
 
-class FichierIverse: #ya une faute au fait..
-       
-    
+class FichierIverse: #Il y a une faute au fait..  
     
     def __init__(self):
         
         ft = Parsemail()
-        self.listeDmail = ft.parsemail()
+        self.listeDmail, self.listeDmailRaci = ft.parsemail()
         print("#######################################################")
         
     """
-    calculer le nb de mots total dans chaque documents, et dans le corpus.
+    ############################
+    FONCTION qui calcule l'effectif d'un mot dans un mail, et son effectif dans le corpus. Retourne ces données sous la forme d'un dico qui sert de fichier inversé.
+    retourne aussi le nombre total de mots dans chaque mail, et aussi dans le corpus
+    ############################
     """
-    def fichInv(self):
+    
+    def fichInv(self,entreListMail):
         
-        nbmotsDocs = [None] * len(self.listeDmail) #initialiser ac le nb de docs(c mieu d'initialiser ac None
-        nbmotCorpus = 0
+        nbmotsDocs = [None] * len(entreListMail) #liste qui contient le nombre de mots dans chaque document ,initialisé ac le nb de docs(c mieu d'initialiser ac None)
         
-        dicoInv = {} #pas sur qu'un dico soit une si bonne idée..
+        nbmotCorpus = 0 #compteur du nombre cumulé des mots dans les mails
         
-        for indexmail in range(len(self.listeDmail)):#defile les mails
-            #print(mess[3])
-            countmotmail = 0
+        dicoInv = {} #clé: un mot, valeur:
+        
+        for indexmail in range(len(entreListMail)):#defile les mails
             
-            for mot in (self.listeDmail[indexmail])[3]:#defile les mots du coprs de mail
+            countmotmail = 0 #compteur du nb de mots dans un mail, initialisé à 0
+            
+            for mot in (entreListMail[indexmail])[3]:#defile les mots du corps de mail. le [3] correspond au fait que ya la date est le sujet dont je ne me sert pas qui sont stockés
+                
                 
                 countmotmail += 1
                 
                 if mot not in dicoInv:#premiere fois que le mot est detecté
-                    #freqmess = 1
-                    #print("merde") #faut faire un dictionnaire de tuples.. ptetre pas une bonne idée les tuples en fait
-                    dicoInv[mot] = [[1,0],(indexmail,1)] #frequence totale=> au lieu d'indexmail, faire tuple indexmail + freq dans le mail..
+                    
+                    dicoInv[mot] = [[1,0],(indexmail,1)] #ajoute comme valeur une liste avec le nombre de fois ou le mot est présent dans le corpus(le zero ne sert à rien au final), puis des tuples, avec (numerodumail, nb_defois_oùlemot_est_dsle_mail)
                     
                 else: #le mot est déja présent dans le dico
-                    #freqmess = (dicoInv[mot])[1]+1 #ouais mais non...: il faut que cette frequence soit associée à chaque message..
-                    #dicoInv[mot] = tuple(map(operator.add, dicoInv[mot], (1,freqmess) ))
+                    
                     ((dicoInv[mot])[0])[0] += 1 #ajout de 1 a liste de frequence totale
                     
                     if ((dicoInv[mot])[-1])[0] != indexmail:#la premiere occurence du mot dans ce mail ((dicoInv[mot])[-1])[0] = l'index du mail du dernier tuple du mot dans le dico...
-                        (dicoInv[mot]).append((indexmail,1))
-                    else: #prochaine occurences du mot dans le mm mail
-                        (dicoInv[mot])[-1] = tuple(map(operator.add, (dicoInv[mot])[-1], (0,1) ))
+                        (dicoInv[mot]).append((indexmail,1)) #rajoute un nouveau tuple dans la valeur du mot
                         
-            nbmotsDocs[indexmail] = countmotmail 
-            nbmotCorpus += countmotmail           
+                    else: #prochaine occurences du mot dans le mm mail
+                        (dicoInv[mot])[-1] = tuple(map(operator.add, (dicoInv[mot])[-1], (0,1) )) #mise a jour du tuple
+                        
+            nbmotsDocs[indexmail] = countmotmail #permet de compter le nombre de mots total dans un mail
+            nbmotCorpus += countmotmail #permet de compter le nombre de mots dans le corpus
      
         return dicoInv,nbmotsDocs,nbmotCorpus
   
-  
+    
   
   
 if __name__ == "__main__":    
     ft = FichierIverse()
-    dicoInv, nbmotsdocs, nbmotCorpus = ft.fichInv()
+    
+    dicoInv, nbmotsdocs, nbmotCorpus = ft.fichInv(ft.listeDmailRaci)  #on peut choisir l'argument, entre raci et normal
                
     print("#########              DICO                 #############")    
-    ""    
-    print(str(dicoInv))
     
-    for i in dicoInv:
-        print(i +": "+ str(dicoInv[i]))
+    print(dicoInv["tarragon"])
+    """
+    bon ici aussi ca à l'air de marcher
+    """
+    
+    for cle in dicoInv:
+        print(cle +": ")# + str(dicoInv[cle]))
         
     print(nbmotsdocs)
     print(nbmotCorpus)
@@ -87,7 +92,7 @@ if __name__ == "__main__":
 Ce que tout ca retourne:
 Un dictionnaire avec comme clé des mots,
 et comme valeur une liste qui contient:
-En premier une liste, avec en premiere valeur l'effectif total du mot( le zero après est pour la fonction de correction)
+En premier une liste, avec en premiere valeur l'effectif total du mot( le zero après est pour la fonction de correction, pas implémentée car trop complexe)
 ensuite, une sucession de tuples, qui contiennent:
 en premier le numero (l'index) du document, et ensuite l'effectif du mot dans le document.
 """

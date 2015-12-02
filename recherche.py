@@ -1,35 +1,61 @@
  #-*- coding: utf8 -*-
 
 from tfidf import TfIdf
+from main import Parsemail
 import nltk
 import pickle
+import os
+import psutil
 
 class Recherche:
     
-    def __init__(self):
-        #ti = TfIdf()
-        #dicoInvNONUTILISE, self.norme = ti.calcul() #retourne un tuple..
-        with open("dicotfidf", 'rb') as dicoPKL:
+    def __init__(self,flagRACI):
+        
+        self.flagRACI = flagRACI
+        
+        with open("dicotfidf", 'rb') as dicoPKL: #ouvre le fichier inverse serialisé
             self.dicoInv= pickle.load(dicoPKL)
-        with open("norme", 'rb') as normePKL:
+            
+        with open("norme", 'rb') as normePKL: #ouvre la norme serialisée
             self.norme= pickle.load(normePKL)
     
     def traitement_requete(self,requete):
-        #en gros faut faire la mm chose que pour les docs.. et considérer la requete comme un doc?
+        """
+        ici il faut que j'intègre les mots racinisés et non racinisé dans le dicoreq.. et si je divisait par deux le tf des racinisés? faudrait du coup avoir les raci et non racis dans le mm dico..fait, mais peut pas y avoir un pb de clés dupliquées du coup??
+        """
         dicoreq =  {}
-        listmotreq = nltk.word_tokenize(requete)
-        #bon on passe pr l'instant les stopwords, regexp et lower...
+        requete = requete.lower()
+        
+        parse = Parsemail() #le pb c'est l'initialisation d'un instance complète de parsemail est inutile..
+        stoplist = parse.stopwords() #ca serait mieux dans l'initialiseur main
+        
+        if self.flagRACI == True :
+            listmotreqRACI = (parse.tokenostop(requete, stoplist))[1]
+            listmotreq = (parse.tokenostop(requete, stoplist))[0]
+        else:
+            listmotreq = (parse.tokenostop(requete, stoplist))[0] #[0] pr le non racinisé
+            
+        
+        
+        #listmotreq = nltk.word_tokenize(requete, 'french')
         
         #on ne calcule que le tf, car idf = log( nbdedocuments / nbdedocu_contenantle_mot ) = log(1/1) = 0
         #a moins qu'on ne prenne en compte le corpus ds le nb de docs?
         """
-        vérifier que le mot soit ds le grand dico...
+        vérifier que le mot soit ds le grand dico...=>c'est vérifié un peu dans rech, mais le tf est calculé avec la présence
+        du mot
         """
         for mot in listmotreq:
             if mot not in dicoreq:
-                dicoreq[mot] = float( 1 / len(listmotreq) )
+                dicoreq[mot] = float( 1 / len(listmotreq) ) #calcule le tf
             else:
-                dicoreq[mot] += float( 1 / len(listmotreq) )
+                dicoreq[mot] += float( 1 / len(listmotreq) ) #update le tf si plusieurs * le mm mot ds la requète
+                
+        for mot in listmotreqRACI:
+            if mot not in dicoreq:
+                dicoreq[mot] = (float( 1 / len(listmotreq) ) /2 )#calcule le tf
+            else:
+                dicoreq[mot] += (float( 1 / len(listmotreq) ) /2 ) #update le tf si plusieurs * le mm mot ds la requète
         
         return dicoreq
         
@@ -47,7 +73,9 @@ class Recherche:
         listdedocs = []
         
         for motreq in listmotreq:
-            if motreq in self.dicoInv: #au cas ou un mot n'est pas dans le corpus
+            
+            if motreq in self.dicoInv: #au cas ou un mot n'est pas dans le corpus, controle si le mot est bien dans le dico.
+                print(motreq)
                 dicoinvSimpl[motreq] = self.dicoInv[motreq]
                 
                 for indextuple in range(1, len(dicoinvSimpl[motreq]) ): #sert a creer la liste de docs
@@ -58,11 +86,7 @@ class Recherche:
                         listdedocs.append(tutuple[0])
         
         listdedocs = sorted(listdedocs) #faire gaffe à ca, nrmlt c'est bon
-        """
-        print("putainnnnnnn")
-        print(listdedocs)
-        print(dicoinvSimpl)
-        """
+        
         listcos = [] #liste les cosinus(enfin..) des documents. ds le mm ordre que listdedocs
         for doc in listdedocs:#parcourt les docs
             
@@ -83,20 +107,39 @@ class Recherche:
         listcosnorm = []
         
         #normalisation des cos            #a faire ds la boucle plus haut
+        """
+        putain ya la norme aussi! et yen a 2différentes nrmlmt
+        """
         for cos in listcos:
             cosnorm = float( cos / self.norme )
             listcosnorm.append(cosnorm)
         
-        print("resultatfinal")
+
         #print(listdedocs)
         #print(listcosnorm)
         #print(sorted(listcosnorm, reverse=True))
         #faut trier les deux listes dans l'ordre de listcosnorm
-        listcosnorm,listdedocs = zip(*sorted(zip(listcosnorm,listdedocs), reverse = True))
-        print(listdedocs)
+        
+        if len(listdedocs) != 0:
+            listcosnorm,listdedocs = zip(*sorted(zip(listcosnorm,listdedocs), reverse = True))
+            #print(listdedocs)
+            final_index=[]            
+            for ele in listdedocs:
+                final_index.append(ele+1) #pr faire correspondre l'index
+            print("Index mail par ordre décroissant de pertinence : "+str(final_index))
+            return final_index
+        # Traitement de l'exception en cas d'absence du resultat
+        else:
+            print ("Aucun résultat corespondant à votre requête")
+            
+            
+rec = Recherche(True) #true = raci
+print(rec.dicoInv["tarragon"])
+dicoreq = rec.traitement_requete("tarragona") #tarragona spain genomes biology biologie
 
-re = Recherche()
-dicoreq = re.traitement_requete("tarragona ") #tarragona spain genomes biology biologie
-#c'est normal qu'il y ai des problèmes, ya des documents qui manquent (le 93) du ca decale.
-rech = re.rech(dicoreq)
+rech = rec.rech(dicoreq)
 print(dicoreq)
+
+process = psutil.Process(os.getpid())
+print(process.memory_info().rss / 1000000) #rss : resident set size
+print(process.cpu_times())

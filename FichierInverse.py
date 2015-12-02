@@ -2,7 +2,7 @@
 #F9 pour lancer le prog!
 
 import operator #pour laddition des tuples
-from main import Parsemail #import du premier script permettant la lecture et tokénisation des contenus du mail
+#from parsDemail import Parsemail #import du premier script permettant la lecture et tokénisation des contenus du mail
 
 """
 Convention objet python:
@@ -21,9 +21,7 @@ class FichierIverse: #Il y a une faute au fait..
     
     def __init__(self):
         
-        ft = Parsemail()
-        self.listeDmail, self.listeDmailRaci = ft.parsemail()
-        print("#######################################################")
+        print("##################### FichierInverse lancé ##################################")
         
     """
     ############################

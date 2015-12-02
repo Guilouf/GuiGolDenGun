@@ -15,15 +15,15 @@ on peut faire une méthode pour calculer la norme des tf-idf( racine (somme de t
  
 class TfIdf:
      
-    def __init__(self,flagRaci):
-         
-        fi = FichierIverse()
-        if flagRaci == True:
-            self.dicoInv, self.nbmotsdocs, self.nbmotCorpus = fi.fichInv(fi.listeDmailRaci)
-            self.suffixe = ""  #on oublie ca en fait "RACI"
-        else: 
-            self.dicoInv, self.nbmotsdocs, self.nbmotCorpus = fi.fichInv(fi.listeDmail)
-            self.suffixe = ""
+    def __init__(self,flagAP,dicoInv,nbmotsdocs,nbmotCorpus):
+        self.suffixe = "" #a supprimer
+        
+        self.flagAPPEND = flagAP
+        
+        self.dicoInv, self.nbmotsdocs, self.nbmotCorpus = dicoInv,nbmotsdocs,nbmotCorpus
+        
+        print("################## Calcul du TF-IDF ###############################")
+        
         """    
         with open("dicotfidf", 'rb') as dicoPKL: #ouvre le fichier inverse serialisé
             self.dicoInv= pickle.load(dicoPKL)
@@ -80,9 +80,9 @@ class TfIdf:
             
         return self.dicoInv, self.norme  #ya pas une couille avc le fait d'utiliser le mm objet initialisé au départ??? puis putain il sert a rien le return!
     
-    def serialisation(self,flagAPPEND):
+    def serialisation(self):
         
-        if flagAPPEND == False:#on écrase les anciens dico
+        if self.flagAPPEND == False:#on écrase les anciens dico
             with open("dicotfidf"+self.suffixe, 'wb') as dicotfidfPKL: #serialise le fichier inverse contenant les tf-idf...
                 pickle.dump(self.dicoInv,dicotfidfPKL)
                 
@@ -109,7 +109,7 @@ class TfIdf:
     
         
 """
-le faux main:
+le faux parsDemail:
 """ 
 if __name__ == "__main__":   
     process = psutil.Process(os.getpid()) 

@@ -1,8 +1,8 @@
  #-*- coding: utf8 -*-
 
-from tfidf import TfIdf
-from main import Parsemail
-import nltk
+from tfidf import TfIdf #aussi apparement..
+from parsDemail import Parsemail 
+import nltk #inutile
 import pickle
 import os
 import psutil
@@ -25,9 +25,11 @@ class Recherche:
         """
         dicoreq =  {}
         requete = requete.lower()
-        
-        parse = Parsemail() #le pb c'est l'initialisation d'un instance complète de parsemail est inutile..
-        stoplist = parse.stopwords() #ca serait mieux dans l'initialiseur main
+        filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/Traitement_Interlignes/"
+        pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"        
+        pathENG = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_en.txt"
+        parse = Parsemail(filepath,pathFR,pathENG) #le pb c'est l'initialisation d'un instance complète de parsemail est inutile..
+        stoplist = parse.stopwords() #ca serait mieux dans l'initialiseur parsDemail
         
         if self.flagRACI == True :
             listmotreqRACI = (parse.tokenostop(requete, stoplist))[1]
@@ -132,14 +134,14 @@ class Recherche:
         else:
             print ("Aucun résultat corespondant à votre requête")
             
-            
-rec = Recherche(True) #true = raci
-print(rec.dicoInv["tarragon"])
-dicoreq = rec.traitement_requete("tarragona") #tarragona spain genomes biology biologie
-
-rech = rec.rech(dicoreq)
-print(dicoreq)
-
-process = psutil.Process(os.getpid())
-print(process.memory_info().rss / 1000000) #rss : resident set size
-print(process.cpu_times())
+if __name__ == "__main__":         
+    rec = Recherche(True) #true = raci
+    print(rec.dicoInv["tarragon"])
+    dicoreq = rec.traitement_requete("tarragona") #tarragona spain genomes biology biologie
+    
+    rech = rec.rech(dicoreq)
+    print(dicoreq)
+    
+    process = psutil.Process(os.getpid())
+    print(process.memory_info().rss / 1000000) #rss : resident set size
+    print(process.cpu_times())

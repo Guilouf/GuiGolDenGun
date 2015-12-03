@@ -35,7 +35,7 @@ def initialisation():
 
 initialisation()#commenter pour faire des recherches successives
 
-rec = Recherche(True)#le truc indique que la rechecher va se porter aussi sur les mots racinisés.
+rec = Recherche(True,1)#le true indique que la rechecher va se porter aussi sur les mots racinisés. le 1 veut dire mm poid racinisé et nn raci, 2= 2*- de poid pr les racinisés
 dicoreq = rec.traitement_requete("batard") #tarragona spain genomes biology biologie
     
 rech = rec.rech(dicoreq)

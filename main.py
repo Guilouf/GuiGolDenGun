@@ -33,7 +33,7 @@ def initialisation():
     ti2.calcul()
     ti2.serialisation()
 
-initialisation()#commenter pour faire des recherches successives
+initialisation()
 
 rec = Recherche(True)#le truc indique que la rechecher va se porter aussi sur les mots racinisés.
 dicoreq = rec.traitement_requete("batard") #tarragona spain genomes biology biologie

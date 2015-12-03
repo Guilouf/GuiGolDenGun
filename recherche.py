@@ -9,9 +9,10 @@ import psutil
 
 class Recherche:
     
-    def __init__(self,flagRACI):
+    def __init__(self,flagRACI=True, POIDS=1):
         
         self.flagRACI = flagRACI
+        self.poids = POIDS
         
         with open("dicotfidf", 'rb') as dicoPKL: #ouvre le fichier inverse serialisé
             self.dicoInv= pickle.load(dicoPKL)
@@ -55,9 +56,9 @@ class Recherche:
                 
         for mot in listmotreqRACI:
             if mot not in dicoreq:
-                dicoreq[mot] = (float( 1 / len(listmotreq) ) /2 )#calcule le tf
+                dicoreq[mot] = (float( 1 / len(listmotreq) ) / self.poids )#calcule le tf
             else:
-                dicoreq[mot] += (float( 1 / len(listmotreq) ) /2 ) #update le tf si plusieurs * le mm mot ds la requète
+                dicoreq[mot] += (float( 1 / len(listmotreq) ) / self.poids ) #update le tf si plusieurs * le mm mot ds la requète
         
         return dicoreq
         

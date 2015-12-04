@@ -74,7 +74,10 @@ class TfIdf:
                 (self.dicoInv[clemot])[indextuple] +=  (tf_idf,)  #ajoute le tf-idf à la fin du tuple(la virgule est la pr dire que tf_idf est un tuple.. unique)
                 #print((self.dicoInv[clemot])[indextuple])
                 
-        self.norme = float(math.sqrt(sommedesTfIdfaucarre)) #calcule la norme des tf-idf
+        self.norme = (sommedesTfIdfaucarre) #calcule la norme des tf-idf
+        """
+        pas ici la norme bordel! juste sommedesTfIdfaucarre
+        """
         
         
             
@@ -85,10 +88,10 @@ class TfIdf:
         if self.flagAPPEND == False:#on écrase les anciens dico
             with open("dicotfidf"+self.suffixe, 'wb') as dicotfidfPKL: #serialise le fichier inverse contenant les tf-idf...
                 pickle.dump(self.dicoInv,dicotfidfPKL)
-                
+            """    
             with open("norme"+self.suffixe, 'wb') as normePKL: #serialise la norme
                 pickle.dump(self.norme,normePKL)
-                
+            """    
         else:#là on essaye de rajouter le nouveau dico..
             #vieuDico = {}
             #viellenorme = 0.0

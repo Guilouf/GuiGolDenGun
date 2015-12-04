@@ -16,7 +16,7 @@ pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.to
 pathENG = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_en.txt"
 
 def initialisation():
-    pm = Parsemail(filepath,pathFR,pathENG)#tain c quoi déja le truc pour écraser les méthodes??la surcharge, des constructeurs
+    pm = Parsemail()#tain c quoi déja le truc pour écraser les méthodes??la surcharge, des constructeurs
     listeDmail, listeDmailRaci = pm.parsemail()
     
     
@@ -33,17 +33,18 @@ def initialisation():
     ti2.calcul()
     ti2.serialisation()
 
-initialisation()#commenter pour faire des recherches successives
+#initialisation()#commenter pour faire des recherches successives
 
 rec = Recherche(True,1)#le true indique que la rechecher va se porter aussi sur les mots racinisés. le 1 veut dire mm poid racinisé et nn raci, 2= 2*- de poid pr les racinisés
-dicoreq = rec.traitement_requete("tarragona") #tarragona spain genomes biology biologie
+dicoreq = rec.traitement_requete("tarragona spain genomes biology biologie") #tarragona spain genomes biology biologie
     
 rech = rec.rech(dicoreq)
 print(dicoreq)
+print("Nombre de documents retrouvés: " + str(len(rech)))
 
 
 process = psutil.Process(os.getpid())
-print(process.memory_info().rss / 1000000) #rss : resident set size
+print("Memmoire utilisée: "  +  str(process.memory_info().rss / 1000000)) #rss : resident set size
 print(process.cpu_times())
 
 """ c'est cool ca

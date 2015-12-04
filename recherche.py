@@ -6,6 +6,7 @@ import nltk #inutile
 import pickle
 import os
 import psutil
+import math
 
 class Recherche:
     
@@ -16,20 +17,22 @@ class Recherche:
         
         with open("dicotfidf", 'rb') as dicoPKL: #ouvre le fichier inverse serialisé
             self.dicoInv= pickle.load(dicoPKL)
-            
+        """    
         with open("norme", 'rb') as normePKL: #ouvre la norme serialisée
             self.norme= pickle.load(normePKL)
-    
+        """
     def traitement_requete(self,requete):
         """
         ici il faut que j'intègre les mots racinisés et non racinisé dans le dicoreq.. et si je divisait par deux le tf des racinisés? faudrait du coup avoir les raci et non racis dans le mm dico..fait, mais peut pas y avoir un pb de clés dupliquées du coup??
         """
         dicoreq =  {}
         requete = requete.lower()
+        
         filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/Traitement_Interlignes/"
         pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"        
         pathENG = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_en.txt"
-        parse = Parsemail(filepath,pathFR,pathENG) #le pb c'est l'initialisation d'un instance complète de parsemail est inutile..
+        
+        parse = Parsemail() #le pb c'est l'initialisation d'un instance complète de parsemail est inutile..
         stoplist = parse.stopwords() #ca serait mieux dans l'initialiseur parsDemail
         
         if self.flagRACI == True :
@@ -78,6 +81,7 @@ class Recherche:
         for motreq in listmotreq:
             
             if motreq in self.dicoInv: #au cas ou un mot n'est pas dans le corpus, controle si le mot est bien dans le dico.
+                
                 print(motreq)
                 dicoinvSimpl[motreq] = self.dicoInv[motreq]
                 
@@ -89,22 +93,30 @@ class Recherche:
                         listdedocs.append(tutuple[0])
         
         listdedocs = sorted(listdedocs) #faire gaffe à ca, nrmlt c'est bon
-        
+        listmotreq = list(dicoinvSimpl.keys())
         listcos = [] #liste les cosinus(enfin..) des documents. ds le mm ordre que listdedocs
-        for doc in listdedocs:#parcourt les docs
-            
-            
-            cos = 0.0 #truc 
-            
-            for motreq in listmotreq:#parcours les mots de la requete, mais ya des mots inconnus qui passent!!!!!!!!
-                dicoinvSimpl[motreq]
-                
-                for indextuple in range(1, len(dicoinvSimpl[motreq]) ): #le pb c que ca parcour parfois pour rien qd le doc ne contient pas le mot...
-                    
-                    if ((dicoinvSimpl[motreq])[indextuple])[0] == doc:
-                        
-                        cos += ((dicoinvSimpl[motreq])[indextuple])[2] * dicoreq[motreq] #tfidf du mot ds le doc * tf du mot ds la req
+        listPoidQcar = []
+        listPoidDcar = []
         
+        for doc in listdedocs:#parcourt les docs
+                  
+            cos = 0.0 #truc 
+            sommePoidQ = 0.0
+            sommePoidD = 0.0
+            
+            for motreq in listmotreq:#parcours les mots de la requete
+                dicoinvSimpl[motreq] 
+                
+                
+                for indextuple in range(1, len(dicoinvSimpl[motreq]) ): #parcours les tuples correspondant aux documents            le pb c que ca parcour parfois pour rien qd le doc ne contient pas le mot...
+                    
+                    if ((dicoinvSimpl[motreq])[indextuple])[0] == doc:#si le doc ds le tuple correspont au doc de la liste des docs retenus
+                        
+                        sommePoidQ += dicoreq[motreq] * dicoreq[motreq]
+                        sommePoidD += ((dicoinvSimpl[motreq])[indextuple])[2] * ((dicoinvSimpl[motreq])[indextuple])[2]
+                        cos += ((dicoinvSimpl[motreq])[indextuple])[2] * dicoreq[motreq] #tfidf du mot ds le doc * tf du mot ds la req
+            listPoidDcar.append(sommePoidD)
+            listPoidQcar.append(sommePoidQ)
             listcos.append(cos)
         
         listcosnorm = []
@@ -112,9 +124,15 @@ class Recherche:
         #normalisation des cos            #a faire ds la boucle plus haut
         """
         putain ya la norme aussi! et yen a 2différentes nrmlmt
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         """
-        for cos in listcos:
-            cosnorm = float( cos / self.norme )
+        for indexcosi in range(len(listcos)):#faire un compteur
+            norme = math.sqrt( listPoidDcar[indexcosi] + listPoidQcar[indexcosi] )
+            cosnorm = float( listcos[indexcosi] / norme )
+            """
+            bon je galère vraiment ac cette putain de norme
+            """
             listcosnorm.append(cosnorm)
         
 
@@ -134,6 +152,8 @@ class Recherche:
         # Traitement de l'exception en cas d'absence du resultat
         else:
             print ("Aucun résultat corespondant à votre requête")
+            
+        
             
 if __name__ == "__main__":         
     rec = Recherche(True) #true = raci

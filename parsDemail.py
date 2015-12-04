@@ -24,17 +24,22 @@ INTEGRER des arguments pour créer les paths..
 
 class Parsemail:
 
-    def __init__(self,filepath,pathFR,pathENG):
+    def __init__(self):
         
-        print("start __init__ parsemail" )        
+        print("start __init__ parsemail" )   
+             
+        ""
+        self.filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/Traitement_Interlignes/"
+        self.pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"        
+        self.pathENG = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_en.txt"
+        ""
+        """    
+        self.filepath = "Traitement_Interlignes/"
         
-            
-        self.filepath = filepath 
+        self.pathFR = "common_words.total_fr.txt"
         
-        self.pathFR = pathFR
-        
-        self.pathENG = pathENG
-        
+        self.pathENG ="common_words.total_fr.txt"
+        """
         listdefichenbordel = os.listdir(self.filepath)
         self.listdefich = sorted(listdefichenbordel, key = lambda num: int(num[:-8]) ) #""" permet de trier les fichiers selon l'ordre numérique (attention, faut que les fichiers aient bien .recoded à la fin...)"""
         
@@ -75,7 +80,7 @@ class Parsemail:
         mailtokenibad = nltk.word_tokenize(corpsmail) #fonction de nltk qui tokenise les mots du corps du mail
         #(point esseulé, ou à la fin d'un mot. , PROBLEME DES "d'" => expressions régulières
         """
-        et si tu mettait l'option french connard????????????????????????????????????????
+        et si tu mettait l'option french *******????????????????????????????????????????
         """
        
         mailtokeni =  [] #liste qui contient les mots tokenisés et corrigés d'un document

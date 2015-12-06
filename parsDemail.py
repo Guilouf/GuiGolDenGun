@@ -1,7 +1,6 @@
-#la premiere ligne est pour linux donc bat les couilles
 # -*- coding: utf-8 -*-
 
-import os, os.path #chemins de fichier
+import os #chemins de fichier
 import nltk #outils pour tokenisation
 from nltk.stem.snowball import SnowballStemmer #racinisation
 import email #pour parser les mails
@@ -24,29 +23,23 @@ INTEGRER des arguments pour créer les paths..
 
 class Parsemail:
 
-    def __init__(self):
+    def __init__(self,FlagListFich=True):
         
         print("start __init__ parsemail" )   
-             
-        ""
+              
+        #j'ai essayé de mettre les chemins en relatif pr que ce soit plus pratique, mais curieusement ca à quasiment doublé le temps de calcul...    
         self.filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/Traitement_Interlignes/"
         self.pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"        
         self.pathENG = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_en.txt"
-        ""
-        """    
-        self.filepath = "Traitement_Interlignes/"
-        
-        self.pathFR = "common_words.total_fr.txt"
-        
-        self.pathENG ="common_words.total_fr.txt"
-        """
-        listdefichenbordel = os.listdir(self.filepath)
-        self.listdefich = sorted(listdefichenbordel, key = lambda num: int(num[:-8]) ) #""" permet de trier les fichiers selon l'ordre numérique (attention, faut que les fichiers aient bien .recoded à la fin...)"""
-        
         
         self.stoplist = self.stopwords() 
-        
         self.raciniseur = SnowballStemmer("french")
+        
+        if FlagListFich == True:#pas applé dans le cas du traitement de la requète
+            listdefichenbordel = os.listdir(self.filepath)
+            self.listdefich = sorted(listdefichenbordel, key = lambda num: int(num[:-8]) ) #""" permet de trier les fichiers selon l'ordre numérique (attention, faut que les fichiers aient bien .recoded à la fin...)"""
+     
+            
     
     """
     ############################
@@ -78,20 +71,18 @@ class Parsemail:
     def tokenostop(self,corpsmail, stoplist): 
         
         mailtokenibad = nltk.word_tokenize(corpsmail) #fonction de nltk qui tokenise les mots du corps du mail
+        #pas d'option french car il ya aussi des mots anglais
         #(point esseulé, ou à la fin d'un mot. , PROBLEME DES "d'" => expressions régulières
-        """
-        et si tu mettait l'option french *******????????????????????????????????????????
-        """
        
         mailtokeni =  [] #liste qui contient les mots tokenisés et corrigés d'un document
         mailracini = [] #liste qui contient les mots racinisés
         
         for i in mailtokenibad: #parcourt les mots tokénisés par nltk
             fix = re.sub("((.)?'|)((?P<mot>[ôûùéêèñïçàâA-Za-z_ @:-]*).?)", "\g<mot>", i) #expression régulière pour corriger les ratés de la fonction nltk
+            #pre compiler les regex n'a pas d'impact, python le fait lui mm d'après ce que j'ai compris
             """
             faut refaire le truc d'avant
             """
-            #mots a problème:  aujourd'hui
             #fix = i #décommenter pour desactiver la regex
             #print fix
             if fix == '' or fix in stoplist: # si un "mot" à été supprimé par la regex, permet de ne pas l'ajouter dans la liste finale. ou alors le mot est un stopword
@@ -138,13 +129,10 @@ class Parsemail:
             contenumail = email.message_from_string(mail) #utilise le package email pour lire le contenu du mail
             
             
-            mailform.append(contenumail['subject'].lower()) #A recoder si je veux en faire qqchose.
+            mailform.append(contenumail['subject'].lower()) #A rencoder si je veux en faire qqchose.
             mailform.append(contenumail['date'].lower())
             mailform.append(contenumail['from'])
             
-            """
-            je peux mettre un flag bool ici. et retourner 2 versions de total mail..
-            """
             mailtokeni, mailraci  = self.tokenostop(contenumail.get_payload().lower(),self.stoplist) #contenu du mail tokenisé
             #mettre un flag pr desacti si besoins
             

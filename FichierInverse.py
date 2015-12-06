@@ -1,8 +1,7 @@
- #-*- coding: utf8 -*-
-#F9 pour lancer le prog!
+#-*- coding: utf8 -*-
 
 import operator #pour laddition des tuples
-#from parsDemail import Parsemail #import du premier script permettant la lecture et tokénisation des contenus du mail
+
 
 """
 Convention objet python:

@@ -33,10 +33,11 @@ def initialisation():
     ti2.calcul()
     ti2.serialisation()
 
-#initialisation()#commenter pour faire des recherches successives
+initialisation()#commenter pour faire des recherches successives
 
-rec = Recherche(True,1)#le true indique que la rechecher va se porter aussi sur les mots racinisés. le 1 veut dire mm poid racinisé et nn raci, 2= 2*- de poid pr les racinisés
-dicoreq = rec.traitement_requete("tarragona spain genomes biology biologie") #tarragona spain genomes biology biologie
+rec = Recherche()#le true indique que la rechecher va se porter aussi sur les mots racinisés. le 1 veut dire mm poid racinisé et nn raci, 2= 2*- de poid pr les racinisés
+#rec = Recherche(False,2) #c'est une surcharge en gros
+dicoreq = rec.traitement_requete("tarragona ") #tarragona spain genomes biology biologie
     
 rech = rec.rech(dicoreq)
 print(dicoreq)
@@ -47,13 +48,3 @@ process = psutil.Process(os.getpid())
 print("Memmoire utilisée: "  +  str(process.memory_info().rss / 1000000)) #rss : resident set size
 print(process.cpu_times())
 
-""" c'est cool ca
-def __init__(self,arg1=None,arg2=None):
-    if arg1 and arg2 :
-        # traitement si argument 1 et 2
-        ...
-    else :
-        # traitement si pas d'argument
-       ...
-
-"""

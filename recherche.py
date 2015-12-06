@@ -1,8 +1,6 @@
- #-*- coding: utf8 -*-
+#-*- coding: utf8 -*-
 
-from tfidf import TfIdf #aussi apparement..
 from parsDemail import Parsemail 
-import nltk #inutile
 import pickle
 import os
 import psutil
@@ -10,30 +8,25 @@ import math
 
 class Recherche:
     
-    def __init__(self,flagRACI=True, POIDS=1):
+    def __init__(self,flagRACI=True, POIDS=1): #valeur par defaut, permet une sorte de surcharge
         
         self.flagRACI = flagRACI
         self.poids = POIDS
-        
+        """
+        self.listmotreq = []
+        ici!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        """
         with open("dicotfidf", 'rb') as dicoPKL: #ouvre le fichier inverse serialisé
             self.dicoInv= pickle.load(dicoPKL)
-        """    
-        with open("norme", 'rb') as normePKL: #ouvre la norme serialisée
-            self.norme= pickle.load(normePKL)
-        """
+        
+        
     def traitement_requete(self,requete):
-        """
-        ici il faut que j'intègre les mots racinisés et non racinisé dans le dicoreq.. et si je divisait par deux le tf des racinisés? faudrait du coup avoir les raci et non racis dans le mm dico..fait, mais peut pas y avoir un pb de clés dupliquées du coup??
-        """
+        
         dicoreq =  {}
         requete = requete.lower()
         
-        filepath = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/archives_SFBI/2015_06_10-bioinfo_archives_annee_2014/Traitement_Interlignes/"
-        pathFR = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_fr.txt"        
-        pathENG = "C:/Users/Guigui/Desktop/M2/ADT/Moteur_Recherche/Outils/common_words.total_en.txt"
-        
-        parse = Parsemail() #le pb c'est l'initialisation d'un instance complète de parsemail est inutile..
-        stoplist = parse.stopwords() #ca serait mieux dans l'initialiseur parsDemail
+        parse = Parsemail(False) #dans l'initialisation de parsmail la detection et le trie des noms de fichier des mails est inutile..
+        stoplist = parse.stopwords() 
         
         if self.flagRACI == True :
             listmotreqRACI = (parse.tokenostop(requete, stoplist))[1]
@@ -42,38 +35,35 @@ class Recherche:
             listmotreq = (parse.tokenostop(requete, stoplist))[0] #[0] pr le non racinisé
             
         
-        
-        #listmotreq = nltk.word_tokenize(requete, 'french')
-        
         #on ne calcule que le tf, car idf = log( nbdedocuments / nbdedocu_contenantle_mot ) = log(1/1) = 0
-        #a moins qu'on ne prenne en compte le corpus ds le nb de docs?
+
         """
-        vérifier que le mot soit ds le grand dico...=>c'est vérifié un peu dans rech, mais le tf est calculé avec la présence
-        du mot
+        vérifier que le mot soit ds le grand dico...=>c'est vérifié, mais le tf est calculé avec la présence
+        du mot. Ceci dit, ca reste cohérent du coup.
         """
+        
         for mot in listmotreq:
             if mot not in dicoreq:
                 dicoreq[mot] = float( 1 / len(listmotreq) ) #calcule le tf
             else:
                 dicoreq[mot] += float( 1 / len(listmotreq) ) #update le tf si plusieurs * le mm mot ds la requète
-                
-        for mot in listmotreqRACI:
-            if mot not in dicoreq:
-                dicoreq[mot] = (float( 1 / len(listmotreq) ) / self.poids )#calcule le tf
-            else:
-                dicoreq[mot] += (float( 1 / len(listmotreq) ) / self.poids ) #update le tf si plusieurs * le mm mot ds la requète
+        
+        if self.flagRACI == True :        
+            for mot in listmotreqRACI:
+                if mot not in dicoreq:
+                    dicoreq[mot] = (float( 1 / len(listmotreq) ) / self.poids )#calcule le tf
+                else:
+                    dicoreq[mot] += (float( 1 / len(listmotreq) ) / self.poids ) #update le tf si plusieurs * le mm mot ds la requète
         
         return dicoreq
         
     def rech(self,dicoreq):
         """
-        l'idée(foireuse?) est de récuperer la liste de tous les docs contenant un des mots de la requete,
+        l'idée est de récuperer la liste de tous les docs contenant un des mots de la requete,
         et ensuite pr chaque document, calculer la somme des produit du tf du mot de la req, et du tfidf de ce mot pour le doc..
         ensuite on divise le truc obtenu par la norme.
-        
-        du coup,
         """
-        listmotreq = list(dicoreq.keys())
+        listmotreq = list(dicoreq.keys())   #c'est idiot!!! ca a déja été créé, faut le passer en self
         
         dicoinvSimpl = {}
         listdedocs = []
@@ -93,7 +83,11 @@ class Recherche:
                         listdedocs.append(tutuple[0])
         
         listdedocs = sorted(listdedocs) #faire gaffe à ca, nrmlt c'est bon
+        """
+        et ca c koi????????????(lismtoreq)
+        """
         listmotreq = list(dicoinvSimpl.keys())
+        
         listcos = [] #liste les cosinus(enfin..) des documents. ds le mm ordre que listdedocs
         listPoidQcar = []
         listPoidDcar = []
@@ -121,18 +115,11 @@ class Recherche:
         
         listcosnorm = []
         
-        #normalisation des cos            #a faire ds la boucle plus haut
-        """
-        putain ya la norme aussi! et yen a 2différentes nrmlmt
-        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        """
+     
         for indexcosi in range(len(listcos)):#faire un compteur
             norme = math.sqrt( listPoidDcar[indexcosi] + listPoidQcar[indexcosi] )
             cosnorm = float( listcos[indexcosi] / norme )
-            """
-            bon je galère vraiment ac cette putain de norme
-            """
+            
             listcosnorm.append(cosnorm)
         
 
@@ -142,14 +129,14 @@ class Recherche:
         #faut trier les deux listes dans l'ordre de listcosnorm
         
         if len(listdedocs) != 0:
-            listcosnorm,listdedocs = zip(*sorted(zip(listcosnorm,listdedocs), reverse = True))
+            listcosnorm,listdedocs = zip(*sorted(zip(listcosnorm,listdedocs), reverse = True))#tri des documents en fonction de leur cos
             #print(listdedocs)
             final_index=[]            
             for ele in listdedocs:
-                final_index.append(ele+1) #pr faire correspondre l'index
+                final_index.append(ele+1) #pr faire correspondre l'index avec les noms des fichiers
             print("Index mail par ordre décroissant de pertinence : "+str(final_index))
             return final_index
-        # Traitement de l'exception en cas d'absence du resultat
+        # Traitement de "l'exception" en cas d'absence du resultat
         else:
             print ("Aucun résultat corespondant à votre requête")
             
